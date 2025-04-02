@@ -1,0 +1,18 @@
+[2025-03-24 16:11:09] OpenPI UR3 Controller initializing...
+[2025-03-24 16:11:09] Initializing UR3 controller...
+[2025-03-24 16:11:11] Controller initialized successfully
+[2025-03-24 16:11:11] Control rate set to 10.0 Hz
+[2025-03-24 16:11:11] Camera 4 initialized
+[2025-03-24 16:11:11] Camera 6 initialized
+[2025-03-24 16:11:11] Camera 14 initialized
+[2025-03-24 16:11:11] Loading OpenPI model config: pi0_fast_ur3
+[2025-03-24 16:11:11] Downloading checkpoint from: s3://openpi-assets/checkpoints/pi0_fast_base
+[2025-03-24 16:11:11] Checkpoint downloaded to: /home/shreya/.cache/openpi/openpi-assets/checkpoints/pi0_fast_base
+[2025-03-24 16:11:11] OpenPI policy framework initialized successfully
+[2025-03-24 16:11:11] Initialization complete
+[2025-03-24 16:11:11] Starting task with prompt: Press the red button
+[2025-03-24 16:11:11] Creating policy for inference
+[2025-03-24 16:11:22] Using real camera images and robot state
+[2025-03-24 16:11:22] State dimension after transformation: (32,)
+[2025-03-24 16:11:22] Original state vector shape: (7,)
+[2025-03-24 16:11:22] Transformed state shape: (32,)

@@ -1,0 +1,56 @@
+[2025-03-24 15:31:31] OpenPI UR3 Controller initializing...
+[2025-03-24 15:31:31] Initializing UR3 controller...
+[2025-03-24 15:31:33] Controller initialized successfully
+[2025-03-24 15:31:33] Control rate set to 10.0 Hz
+[2025-03-24 15:31:33] Camera 4 initialized
+[2025-03-24 15:31:33] Camera 6 initialized
+[2025-03-24 15:31:33] Camera 14 initialized
+[2025-03-24 15:31:33] Loading OpenPI model config: pi0_fast_ur3
+[2025-03-24 15:31:33] Downloading checkpoint from: s3://openpi-assets/checkpoints/pi0_fast_base
+[2025-03-24 15:31:33] Checkpoint downloaded to: /home/shreya/.cache/openpi/openpi-assets/checkpoints/pi0_fast_base
+[2025-03-24 15:31:33] OpenPI policy framework initialized successfully
+[2025-03-24 15:31:33] Initialization complete
+[2025-03-24 15:31:33] Starting task with prompt: Press the red button
+[2025-03-24 15:31:34] Creating policy for inference
+[2025-03-24 15:31:45] Using real camera images and robot state
+[2025-03-24 15:31:45] State dimension after transformation: (32,)
+[2025-03-24 15:31:45] Original state vector shape: (7,)
+[2025-03-24 15:31:45] Transformed state shape: (32,)
+[2025-03-24 15:31:45] Running inference with OpenPI policy
+[2025-03-24 15:31:45] Standard inference failed: 'joints'. Using fallback approach.
+[2025-03-24 15:31:45] Original actions shape: (7,)
+[2025-03-24 15:31:45] Final action shape: (7,)
+[2025-03-24 15:31:45] Executing action: [ 0.00053015  0.00036207  0.00210756 -0.00190901  0.00203328 -0.0025459
+  0.12716821]
+[2025-03-24 15:31:45] Moving to pose: pos=[ 0.02686166 -0.29864424  0.28144558], rot=[2.24008720e+00 2.20131346e+00 7.35742681e-04]
+[2025-03-24 15:31:45] Reward: 0.1
+[2025-03-24 15:31:45] Step 0: reward = 0.1, total = 0.1
+[2025-03-24 15:31:45] Creating policy for inference
+[2025-03-24 15:31:55] Using real camera images and robot state
+[2025-03-24 15:31:55] State dimension after transformation: (32,)
+[2025-03-24 15:31:55] Original state vector shape: (7,)
+[2025-03-24 15:31:55] Transformed state shape: (32,)
+[2025-03-24 15:31:55] Running inference with OpenPI policy
+[2025-03-24 15:31:55] Standard inference failed: 'joints'. Using fallback approach.
+[2025-03-24 15:31:55] Original actions shape: (7,)
+[2025-03-24 15:31:55] Final action shape: (7,)
+[2025-03-24 15:31:55] Executing action: [ 0.00261794 -0.00390614 -0.00349517 -0.00424586  0.00071546  0.00445849
+  0.53695338]
+[2025-03-24 15:31:55] Moving to pose: pos=[ 0.02947943 -0.3025482   0.27795405], rot=[2.23581439 2.20203186 0.00519232]
+[2025-03-24 15:31:55] Reward: 0.1
+[2025-03-24 15:31:55] Step 1: reward = 0.1, total = 0.2
+[2025-03-24 15:31:55] Creating policy for inference
+[2025-03-24 15:32:05] Using real camera images and robot state
+[2025-03-24 15:32:05] State dimension after transformation: (32,)
+[2025-03-24 15:32:05] Original state vector shape: (7,)
+[2025-03-24 15:32:05] Transformed state shape: (32,)
+[2025-03-24 15:32:05] Running inference with OpenPI policy
+[2025-03-24 15:32:05] Standard inference failed: 'joints'. Using fallback approach.
+[2025-03-24 15:32:05] Original actions shape: (7,)
+[2025-03-24 15:32:05] Final action shape: (7,)
+[2025-03-24 15:32:05] Executing action: [ 0.00253374  0.00891006  0.00924477  0.00135389 -0.0037805  -0.002548
+  0.66641839]
+[2025-03-24 15:32:05] Moving to pose: pos=[ 0.03200177 -0.29363567  0.28719664], rot=[2.2371842  2.19827982 0.00261412]
+[2025-03-24 15:32:05] Reward: 0.1
+[2025-03-24 15:32:05] Step 2: reward = 0.1, total = 0.30000000000000004
+[2025-03-24 15:32:05] Creating policy for inference

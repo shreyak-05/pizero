@@ -1,0 +1,144 @@
+[2025-03-24 16:12:23] OpenPI UR3 Controller initializing...
+[2025-03-24 16:12:23] Initializing UR3 controller...
+[2025-03-24 16:12:23] Using mock controller (mock mode)
+[2025-03-24 16:12:23] Controller initialized successfully
+[2025-03-24 16:12:23] Control rate set to 10.0 Hz
+[2025-03-24 16:12:23] Initialized mock camera 0
+[2025-03-24 16:12:23] Initialized mock camera 1
+[2025-03-24 16:12:23] Initialized mock camera 2
+[2025-03-24 16:12:23] Loading OpenPI model config: pi0_fast_ur3
+[2025-03-24 16:12:23] Downloading checkpoint from: s3://openpi-assets/checkpoints/pi0_fast_base
+[2025-03-24 16:12:23] Checkpoint downloaded to: /home/shreya/.cache/openpi/openpi-assets/checkpoints/pi0_fast_base
+[2025-03-24 16:12:23] OpenPI policy framework initialized successfully
+[2025-03-24 16:12:23] Initialization complete
+[2025-03-24 16:12:23] Starting task with prompt: Press the red button
+[2025-03-24 16:12:23] Using mock policy for inference (mock mode)
+[2025-03-24 16:12:23] Using real camera images and robot state
+[2025-03-24 16:12:23] State dimension after transformation: (32,)
+[2025-03-24 16:12:23] Original state vector shape: (7,)
+[2025-03-24 16:12:23] Transformed state shape: (32,)
+[2025-03-24 16:12:23] Running inference with OpenPI policy
+[2025-03-24 16:12:23] Original actions shape: (7,)
+[2025-03-24 16:12:23] Final action shape: (7,)
+[2025-03-24 16:12:23] Executing action: [-5.92696321e-05 -5.20617257e-03  5.11334759e-04 -1.85557923e-03
+  3.18677174e-03  3.75178631e-03  3.67786959e-01]
+[2025-03-24 16:12:23] Moving to pose: pos=[-5.92696321e-05 -5.20617257e-03  5.11334759e-04], rot=[0.17509779 0.54864337 0.7999472  0.16856954]
+[2025-03-24 16:12:23] Reward: 0.1
+[2025-03-24 16:12:23] Step 0: reward = 0.1, total = 0.1
+[2025-03-24 16:12:24] Using mock policy for inference (mock mode)
+[2025-03-24 16:12:24] Using real camera images and robot state
+[2025-03-24 16:12:24] State dimension after transformation: (32,)
+[2025-03-24 16:12:24] Original state vector shape: (7,)
+[2025-03-24 16:12:24] Transformed state shape: (32,)
+[2025-03-24 16:12:24] Running inference with OpenPI policy
+[2025-03-24 16:12:24] Original actions shape: (7,)
+[2025-03-24 16:12:24] Final action shape: (7,)
+[2025-03-24 16:12:24] Executing action: [-7.06579914e-03 -6.63863379e-03  4.75475243e-03 -6.42744707e-05
+  2.45927790e-04  1.39765238e-03  3.17856049e-02]
+[2025-03-24 16:12:24] Moving to pose: pos=[-0.00712507 -0.01184481  0.00526609], rot=[0.17480726 0.5488121  0.8000256  0.16794866]
+[2025-03-24 16:12:24] Reward: 0.1
+[2025-03-24 16:12:24] Step 1: reward = 0.1, total = 0.2
+[2025-03-24 16:12:24] Using mock policy for inference (mock mode)
+[2025-03-24 16:12:24] Using real camera images and robot state
+[2025-03-24 16:12:24] State dimension after transformation: (32,)
+[2025-03-24 16:12:24] Original state vector shape: (7,)
+[2025-03-24 16:12:24] Transformed state shape: (32,)
+[2025-03-24 16:12:24] Running inference with OpenPI policy
+[2025-03-24 16:12:24] Original actions shape: (7,)
+[2025-03-24 16:12:24] Final action shape: (7,)
+[2025-03-24 16:12:24] Executing action: [ 7.48002302e-03  4.94721550e-03 -1.76584352e-03 -2.13387427e-03
+ -3.95460232e-03  9.76296579e-05  5.82314900e-01]
+[2025-03-24 16:12:24] Moving to pose: pos=[ 0.00035495 -0.00689759  0.00350024], rot=[0.17302008 0.54934028 0.79979158 0.16918256]
+[2025-03-24 16:12:24] Reward: 0.1
+[2025-03-24 16:12:24] Step 2: reward = 0.1, total = 0.30000000000000004
+[2025-03-24 16:12:24] Using mock policy for inference (mock mode)
+[2025-03-24 16:12:24] Using real camera images and robot state
+[2025-03-24 16:12:24] State dimension after transformation: (32,)
+[2025-03-24 16:12:24] Original state vector shape: (7,)
+[2025-03-24 16:12:24] Transformed state shape: (32,)
+[2025-03-24 16:12:24] Running inference with OpenPI policy
+[2025-03-24 16:12:24] Original actions shape: (7,)
+[2025-03-24 16:12:24] Final action shape: (7,)
+[2025-03-24 16:12:24] Executing action: [-0.00129434 -0.00629816  0.00421755  0.00287294 -0.00106388 -0.00333864
+  0.19155705]
+[2025-03-24 16:12:24] Moving to pose: pos=[-0.00093938 -0.01319575  0.0077178 ], rot=[0.17375175 0.54781161 0.80038831 0.17056177]
+[2025-03-24 16:12:24] Reward: 0.1
+[2025-03-24 16:12:24] Step 3: reward = 0.1, total = 0.4
+[2025-03-24 16:12:24] Using mock policy for inference (mock mode)
+[2025-03-24 16:12:24] Using real camera images and robot state
+[2025-03-24 16:12:24] State dimension after transformation: (32,)
+[2025-03-24 16:12:24] Original state vector shape: (7,)
+[2025-03-24 16:12:24] Transformed state shape: (32,)
+[2025-03-24 16:12:24] Running inference with OpenPI policy
+[2025-03-24 16:12:24] Original actions shape: (7,)
+[2025-03-24 16:12:24] Final action shape: (7,)
+[2025-03-24 16:12:24] Executing action: [-0.00687856  0.0089872   0.00673273 -0.00044674 -0.00140642  0.00178573
+  0.1031582 ]
+[2025-03-24 16:12:24] Moving to pose: pos=[-0.00781795 -0.00420855  0.01445053], rot=[0.17266161 0.54802466 0.80054024 0.17027118]
+[2025-03-24 16:12:24] Reward: 0.1
+[2025-03-24 16:12:24] Step 4: reward = 0.1, total = 0.5
+[2025-03-24 16:12:25] Using mock policy for inference (mock mode)
+[2025-03-24 16:12:25] Using real camera images and robot state
+[2025-03-24 16:12:25] State dimension after transformation: (32,)
+[2025-03-24 16:12:25] Original state vector shape: (7,)
+[2025-03-24 16:12:25] Transformed state shape: (32,)
+[2025-03-24 16:12:25] Running inference with OpenPI policy
+[2025-03-24 16:12:25] Original actions shape: (7,)
+[2025-03-24 16:12:25] Final action shape: (7,)
+[2025-03-24 16:12:25] Executing action: [ 0.00994979 -0.00342429 -0.00186463 -0.00012363 -0.00196759  0.00122758
+  0.01319474]
+[2025-03-24 16:12:25] Moving to pose: pos=[ 0.00213184 -0.00763284  0.01258589], rot=[0.17152713 0.54801174 0.80078052 0.17032948]
+[2025-03-24 16:12:25] Reward: 0.1
+[2025-03-24 16:12:25] Step 5: reward = 0.1, total = 0.6
+[2025-03-24 16:12:25] Using mock policy for inference (mock mode)
+[2025-03-24 16:12:25] Using real camera images and robot state
+[2025-03-24 16:12:25] State dimension after transformation: (32,)
+[2025-03-24 16:12:25] Original state vector shape: (7,)
+[2025-03-24 16:12:25] Transformed state shape: (32,)
+[2025-03-24 16:12:25] Running inference with OpenPI policy
+[2025-03-24 16:12:25] Original actions shape: (7,)
+[2025-03-24 16:12:25] Final action shape: (7,)
+[2025-03-24 16:12:25] Executing action: [ 0.00245498 -0.00958456 -0.00133107 -0.0027307   0.00234386  0.00416265
+  0.16524376]
+[2025-03-24 16:12:25] Moving to pose: pos=[ 0.00458682 -0.0172174   0.01125483], rot=[0.17108822 0.54966137 0.80018218 0.16825481]
+[2025-03-24 16:12:25] Reward: 0.1
+[2025-03-24 16:12:25] Step 6: reward = 0.1, total = 0.7
+[2025-03-24 16:12:25] Using mock policy for inference (mock mode)
+[2025-03-24 16:12:25] Using real camera images and robot state
+[2025-03-24 16:12:25] State dimension after transformation: (32,)
+[2025-03-24 16:12:25] Original state vector shape: (7,)
+[2025-03-24 16:12:25] Transformed state shape: (32,)
+[2025-03-24 16:12:25] Running inference with OpenPI policy
+[2025-03-24 16:12:25] Original actions shape: (7,)
+[2025-03-24 16:12:25] Final action shape: (7,)
+[2025-03-24 16:12:25] Executing action: [ 4.72202028e-03 -8.75955065e-03  3.29903999e-04  1.88396270e-03
+  4.22061835e-03  2.00352043e-03  9.91582069e-01]
+[2025-03-24 16:12:25] Moving to pose: pos=[ 0.00930884 -0.02597696  0.01158473], rot=[0.17238567 0.54943384 0.80050325 0.16613301]
+[2025-03-24 16:12:25] Reward: 0.1
+[2025-03-24 16:12:25] Step 7: reward = 0.1, total = 0.7999999999999999
+[2025-03-24 16:12:25] Using mock policy for inference (mock mode)
+[2025-03-24 16:12:25] Using real camera images and robot state
+[2025-03-24 16:12:25] State dimension after transformation: (32,)
+[2025-03-24 16:12:25] Original state vector shape: (7,)
+[2025-03-24 16:12:25] Transformed state shape: (32,)
+[2025-03-24 16:12:25] Running inference with OpenPI policy
+[2025-03-24 16:12:26] Original actions shape: (7,)
+[2025-03-24 16:12:26] Final action shape: (7,)
+[2025-03-24 16:12:26] Executing action: [-9.61216886e-03 -5.19006598e-03  4.12313636e-03  3.93902620e-04
+ -2.72230604e-03  1.44495044e-03  5.13838432e-01]
+[2025-03-24 16:12:26] Moving to pose: pos=[-0.00030332 -0.03116702  0.01570787], rot=[0.17093175 0.54917321 0.80096573 0.16626792]
+[2025-03-24 16:12:26] Reward: 0.1
+[2025-03-24 16:12:26] Step 8: reward = 0.1, total = 0.8999999999999999
+[2025-03-24 16:12:26] Using mock policy for inference (mock mode)
+[2025-03-24 16:12:26] Using real camera images and robot state
+[2025-03-24 16:12:26] State dimension after transformation: (32,)
+[2025-03-24 16:12:26] Original state vector shape: (7,)
+[2025-03-24 16:12:26] Transformed state shape: (32,)
+[2025-03-24 16:12:26] Running inference with OpenPI policy
+[2025-03-24 16:12:26] Original actions shape: (7,)
+[2025-03-24 16:12:26] Final action shape: (7,)
+[2025-03-24 16:12:26] Executing action: [-2.72862571e-03 -2.97623725e-03 -6.56660351e-03  4.10864716e-03
+  1.20260533e-03  7.56999009e-04  7.61501871e-01]
+[2025-03-24 16:12:26] Moving to pose: pos=[-0.00303195 -0.03414326  0.00914127], rot=[0.17154794 0.54769125 0.8020517  0.16528359]
+[2025-03-24 16:12:26] Reward: 0.1
+[2025-03-24 16:12:26] Step 9: reward = 0.1, total = 0.9999999999999999

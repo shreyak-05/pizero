@@ -1,0 +1,98 @@
+[2025-03-24 15:40:39] OpenPI UR3 Controller initializing...
+[2025-03-24 15:40:39] Initializing UR3 controller...
+[2025-03-24 15:40:41] Controller initialized successfully
+[2025-03-24 15:40:41] Control rate set to 10.0 Hz
+[2025-03-24 15:40:41] Camera 4 initialized
+[2025-03-24 15:40:41] Camera 6 initialized
+[2025-03-24 15:40:41] Camera 14 initialized
+[2025-03-24 15:40:41] Loading OpenPI model config: pi0_fast_ur3
+[2025-03-24 15:40:41] Downloading checkpoint from: s3://openpi-assets/checkpoints/pi0_fast_base
+[2025-03-24 15:40:41] Checkpoint downloaded to: /home/shreya/.cache/openpi/openpi-assets/checkpoints/pi0_fast_base
+[2025-03-24 15:40:41] OpenPI policy framework initialized successfully
+[2025-03-24 15:40:41] Initialization complete
+[2025-03-24 15:40:41] Starting task with prompt: Press the red button
+[2025-03-24 15:40:42] Creating policy for inference
+[2025-03-24 15:40:54] Using real camera images and robot state
+[2025-03-24 15:40:54] State dimension after transformation: (32,)
+[2025-03-24 15:40:54] Original state vector shape: (7,)
+[2025-03-24 15:40:54] Transformed state shape: (32,)
+[2025-03-24 15:40:54] Running inference with OpenPI policy
+[2025-03-24 15:40:54] Standard inference failed: 'joints'. Using fallback approach.
+[2025-03-24 15:40:54] Original actions shape: (7,)
+[2025-03-24 15:40:54] Final action shape: (7,)
+[2025-03-24 15:40:54] Executing action: [-0.00869223 -0.00349772  0.00469972 -0.0014454  -0.00397599 -0.00096732
+  0.75819842]
+[2025-03-24 15:40:54] Moving to pose: pos=[ 0.01765865 -0.30250049  0.28404061], rot=[2.2404712  2.19533472 0.00238506]
+[2025-03-24 15:40:54] Reward: 0.1
+[2025-03-24 15:40:54] Step 0: reward = 0.1, total = 0.1
+[2025-03-24 15:40:55] Creating policy for inference
+[2025-03-24 15:41:04] Using real camera images and robot state
+[2025-03-24 15:41:04] State dimension after transformation: (32,)
+[2025-03-24 15:41:04] Original state vector shape: (7,)
+[2025-03-24 15:41:04] Transformed state shape: (32,)
+[2025-03-24 15:41:04] Running inference with OpenPI policy
+[2025-03-24 15:41:04] Standard inference failed: 'joints'. Using fallback approach.
+[2025-03-24 15:41:04] Original actions shape: (7,)
+[2025-03-24 15:41:04] Final action shape: (7,)
+[2025-03-24 15:41:04] Executing action: [ 0.00549181 -0.00208827 -0.00749443  0.00260296  0.00452298 -0.00049048
+  0.04499917]
+[2025-03-24 15:41:04] Moving to pose: pos=[ 0.02314497 -0.30457684  0.27654559], rot=[2.24304761e+00 2.19991393e+00 1.90283119e-03]
+[2025-03-24 15:41:05] Reward: 0.1
+[2025-03-24 15:41:05] Step 1: reward = 0.1, total = 0.2
+[2025-03-24 15:41:05] Creating policy for inference
+[2025-03-24 15:41:15] Using real camera images and robot state
+[2025-03-24 15:41:15] State dimension after transformation: (32,)
+[2025-03-24 15:41:15] Original state vector shape: (7,)
+[2025-03-24 15:41:15] Transformed state shape: (32,)
+[2025-03-24 15:41:15] Running inference with OpenPI policy
+[2025-03-24 15:41:15] Standard inference failed: 'joints'. Using fallback approach.
+[2025-03-24 15:41:16] Original actions shape: (7,)
+[2025-03-24 15:41:16] Final action shape: (7,)
+[2025-03-24 15:41:16] Executing action: [-0.00517477 -0.00867421  0.0042841   0.00449889  0.00318036  0.00260437
+  0.85142664]
+[2025-03-24 15:41:16] Moving to pose: pos=[ 0.01796629 -0.31325676  0.28082682], rot=[-2.23824505e+00 -2.19644203e+00  7.20218473e-04]
+[2025-03-24 15:41:16] Reward: 0.1
+[2025-03-24 15:41:16] Step 2: reward = 0.1, total = 0.30000000000000004
+[2025-03-24 15:41:16] Creating policy for inference
+[2025-03-24 15:41:26] Using real camera images and robot state
+[2025-03-24 15:41:26] State dimension after transformation: (32,)
+[2025-03-24 15:41:26] Original state vector shape: (7,)
+[2025-03-24 15:41:26] Transformed state shape: (32,)
+[2025-03-24 15:41:26] Running inference with OpenPI policy
+[2025-03-24 15:41:26] Standard inference failed: 'joints'. Using fallback approach.
+[2025-03-24 15:41:26] Original actions shape: (7,)
+[2025-03-24 15:41:26] Final action shape: (7,)
+[2025-03-24 15:41:26] Executing action: [-0.00284902  0.00694689 -0.00880401  0.00452219 -0.00310845 -0.00410063
+  0.20313284]
+[2025-03-24 15:41:26] Moving to pose: pos=[ 0.01513216 -0.30629988  0.27201924], rot=[-2.23372916 -2.19954435 -0.00347408]
+[2025-03-24 15:41:27] Reward: 0.1
+[2025-03-24 15:41:27] Step 3: reward = 0.1, total = 0.4
+[2025-03-24 15:41:27] Creating policy for inference
+[2025-03-24 15:41:38] Using real camera images and robot state
+[2025-03-24 15:41:38] State dimension after transformation: (32,)
+[2025-03-24 15:41:38] Original state vector shape: (7,)
+[2025-03-24 15:41:38] Transformed state shape: (32,)
+[2025-03-24 15:41:38] Running inference with OpenPI policy
+[2025-03-24 15:41:38] Standard inference failed: 'joints'. Using fallback approach.
+[2025-03-24 15:41:38] Original actions shape: (7,)
+[2025-03-24 15:41:38] Final action shape: (7,)
+[2025-03-24 15:41:38] Executing action: [ 0.00742129 -0.00468931 -0.0038376   0.00106165  0.00353346  0.00161919
+  0.53550213]
+[2025-03-24 15:41:38] Moving to pose: pos=[ 0.02257156 -0.3109808   0.26818213], rot=[-2.23269099e+00 -2.19601627e+00 -1.97194970e-03]
+[2025-03-24 15:41:38] Reward: 0.1
+[2025-03-24 15:41:38] Step 4: reward = 0.1, total = 0.5
+[2025-03-24 15:41:38] Creating policy for inference
+[2025-03-24 15:41:48] Using real camera images and robot state
+[2025-03-24 15:41:48] State dimension after transformation: (32,)
+[2025-03-24 15:41:48] Original state vector shape: (7,)
+[2025-03-24 15:41:48] Transformed state shape: (32,)
+[2025-03-24 15:41:48] Running inference with OpenPI policy
+[2025-03-24 15:41:48] Standard inference failed: 'joints'. Using fallback approach.
+[2025-03-24 15:41:49] Original actions shape: (7,)
+[2025-03-24 15:41:49] Final action shape: (7,)
+[2025-03-24 15:41:49] Executing action: [ 0.00331932  0.00741973  0.00826537 -0.00309089 -0.00487284 -0.00425126
+  0.85502088]
+[2025-03-24 15:41:49] Moving to pose: pos=[ 0.02588876 -0.30355614  0.27644539], rot=[-2.23575052 -2.20090748 -0.00625068]
+[2025-03-24 15:41:49] Reward: 0.1
+[2025-03-24 15:41:49] Step 5: reward = 0.1, total = 0.6
+[2025-03-24 15:41:49] Creating policy for inference

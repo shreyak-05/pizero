@@ -1,0 +1,16 @@
+[2025-03-26 15:01:40] OpenPI UR3 Controller initializing...
+[2025-03-26 15:01:40] Initializing UR3 controller...
+[2025-03-26 15:01:40] Using mock controller (mock mode)
+[2025-03-26 15:01:40] Controller initialized successfully
+[2025-03-26 15:01:40] Control rate set to 10.0 Hz
+[2025-03-26 15:01:40] Initialized mock camera 0
+[2025-03-26 15:01:40] Initialized mock camera 1
+[2025-03-26 15:01:40] Initialized mock camera 2
+[2025-03-26 15:01:40] Loading OpenPI model config: pi0_fast_ur3
+[2025-03-26 15:01:40] Downloading checkpoint from: s3://openpi-assets/checkpoints/pi0_fast_base
+[2025-03-26 15:01:40] Checkpoint downloaded to: /home/shreya/.cache/openpi/openpi-assets/checkpoints/pi0_fast_base
+[2025-03-26 15:01:40] OpenPI policy framework initialized successfully
+[2025-03-26 15:01:40] Initialization complete
+[2025-03-26 15:01:40] Starting task with prompt: Press the red button
+[2025-03-26 15:01:40] Using mock policy for inference (mock mode)
+[2025-03-26 15:01:40] Using real camera images and robot state
