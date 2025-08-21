@@ -29,10 +29,10 @@ def _parse_image(image) -> np.ndarray:
 class UR5Inputs(transforms.DataTransformFn):
 
     action_dim: int
-    model_type: _model.ModelType = _model.ModelType.PI0
+    model_type: _model.ModelType = _model.ModelType.PI0_FAST
 
     def __call__(self, data: dict) -> dict:
-        mask_padding = self.model_type == _model.ModelType.PI0
+        mask_padding = self.model_type == _model.ModelType.PI0_FAST
 
         # First, concatenate the joints and gripper into the state vector.
         # Pad to the expected input dimensionality of the model (same as action_dim).
@@ -52,13 +52,16 @@ class UR5Inputs(transforms.DataTransformFn):
                 "left_wrist_0_rgb": wrist_image,
                 # Since there is no right wrist, replace with zeros
                 "right_wrist_0_rgb": np.zeros_like(base_image),
+
             },
             "image_mask": {
                 "base_0_rgb": np.True_,
                 "left_wrist_0_rgb": np.True_,
                 # Since the "slot" for the right wrist is not used, this mask is set
                 # to False
+            
                 "right_wrist_0_rgb": np.False_ if mask_padding else np.True_,
+                #visualize the mask
             },
         }
 

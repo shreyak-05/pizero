@@ -104,12 +104,28 @@ class MockURTDEController:
         """
         self.use_gripper = True
         self.desired_gripper_qpos = 0.5
-        self._joint_positions = np.zeros(7)  # 7 values including gripper
-        self._robot = MockRobot()  # Use the existing MockRobot class
+                # Define the home position with proper values
+        self.init_ee_pos = [0.5, 0, 0.32]  # Initial end-effector position
+        self.home = np.array(
+            [
+                np.deg2rad(-90.0),  # -90 degrees = -1.5708 radians
+                np.deg2rad(-90.0),  # -90 degrees = -1.5708 radians
+                np.deg2rad(-90.0),  # -90 degrees = -1.5708 radians
+                np.deg2rad(-90.0),  # -90 degrees = -1.5708 radians
+                np.deg2rad(90.0),   #  90 degrees = 1.5708 radians
+                np.deg2rad(90.0),   #  90 degrees = 1.5708 radians
+                0.0,               # Gripper position (0 = closed)
+            ],
+            dtype=np.float32,
+        )
         
-        # Initialize the robot in a default position
-        self._ee_pos = np.zeros(3)
+        # Initialize joint positions with home position values
+        self._joint_positions = self.home.copy()
+        self._robot = MockRobot()  # Use the existing MockRobot class
+    
+        self._ee_pos = np.array(self.init_ee_pos)
         self._ee_quat = np.array([0, 0, 0, 1])
+        
         
         print("[mock]: Created mock URTDE controller")
     

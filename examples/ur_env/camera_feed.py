@@ -1,7 +1,8 @@
 import cv2
 
 # Use default webcam (inex 0)
-camera_index = 4
+#camera_index = 4
+camera_index = 10
 
 # Open webcam
 cap = cv2.VideoCapture(camera_index)

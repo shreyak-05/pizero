@@ -111,9 +111,37 @@ class UR3ControllerWithRemoteInference:
                     "color": cv2.resize(color_image, (224, 224)),
                     "depth": depth_image,
                 }
-        
+        #visualize the camera feeds
+        self.visualize_camera_feeds(images)
         return images
-    
+        
+    def visualize_camera_feeds(self, images):
+        """Display camera feeds in a window."""
+        # Create a combined view of all cameras
+        if not images:
+            return
+        
+        # Get all color images
+        color_images = []
+        for name in sorted(images.keys()):
+            if "color" in images[name]:
+                img = cv2.cvtColor(images[name]["color"].copy(), cv2.COLOR_BGR2RGB)
+                # Add camera name to the image
+                cv2.putText(img, name, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
+                color_images.append(img)
+        
+        if not color_images:
+            return
+        
+        # Combine images horizontally
+        combined_image = np.hstack(color_images)
+        
+        # Create or update visualization window
+        cv2.namedWindow("Camera Feeds", cv2.WINDOW_NORMAL)
+        cv2.imshow("Camera Feeds", combined_image)
+        cv2.waitKey(1)  # Update display, wait 1ms
+
+
     def get_robot_state(self):
         """Retrieve the current state of the robot."""
         # The get_state() method returns a tuple (state, in_good_range)
@@ -160,7 +188,10 @@ class UR3ControllerWithRemoteInference:
         # print(f"Sending observation: {observation}")
         
         # Query the policy server
+        start = time.perf_counter()
         result = self.policy_client.infer(observation)
+        end = time.perf_counter()
+        print(f"[PERF] decode() took {end - start:.6f} seconds")
         return result["actions"]
         
     def execute_action(self, action):
@@ -182,13 +213,26 @@ class UR3ControllerWithRemoteInference:
         gripper_position = action[6]
         scaled_action = action[:6]  # Remove gripper position for IK calculation
         
-        ur5_pose_quat = ur3_arm.forward(scaled_action)
+        ur3_joint_angles = scaled_action
+        ur5_pose_quat = ur5_arm.forward(scaled_action)
         print("UR5 Pose:", ur5_pose_quat)
 
         # Adjust the initial guess to be closer to the expected solution
         ur3_joint_angles = ur3_arm.inverse(ur5_pose_quat, False, q_guess=scaled_action)  # Use scaled_action as initial guess
         print("UR3 Joint Angles (IK):", ur3_joint_angles)
 
+        # Step 4: If still failed, try scaling the pose to UR3 workspace
+        if ur3_joint_angles is None:
+            print("IK attempt failed, trying with scaled pose...")
+            # UR3 has ~60% of the reach of UR5
+            scaled_pose = ur5_pose_quat.copy()
+            # Scale only the position (first 3 elements), keep orientation the same
+            scaling_factor = 0.6
+            scaled_pose[0:3] = scaled_pose[0:3] * scaling_factor
+            ur3_joint_angles = ur3_arm.inverse(scaled_pose, False, q_guess=scaled_action)
+        print("UR3 Joint Angles (scaled IK):", ur3_joint_angles)
+
+        # ur3_joint_angles = scaled_action
         # Validate joint angles (example validation)
         invalid_joint = False
         for i, angle in enumerate(ur3_joint_angles):
@@ -226,7 +270,7 @@ class UR3ControllerWithRemoteInference:
 
 def main():
     """Main function to run the UR3 controller with remote policy server integration."""
-    prompt = "Push the red button thats on the table"
+    prompt ="bus the table"
     robot_ip = "192.168.77.22"
     host = "localhost"  # Replace with the policy server's IP address
     port = 8000
@@ -239,7 +283,7 @@ def main():
     )
 
     # Open-loop horizon: how many actions to execute from a chunk before querying again
-    open_loop_horizon = 32
+    open_loop_horizon = 8
     
     try:
         # Reset the robot
@@ -250,7 +294,7 @@ def main():
         action_chunk = None
 
         # Run inference and execute actions
-        for step in range(1000):  # Run for 32 steps
+        for step in range(500):  # Run for 32 steps
             print(f"Step {step + 1}")
 
             # Capture images and get robot state
@@ -271,7 +315,7 @@ def main():
             # Execute the selected action
             controller.execute_action(action)
 
-            time.sleep(0.1)  # Control loop delay
+            time.sleep(0.05)  # Control loop delay
 
     except KeyboardInterrupt:
         print("Interrupted by user. Stopping...")
@@ -279,6 +323,7 @@ def main():
     finally:
         # Clean up resources
         controller.cleanup()
+        cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":

@@ -35,6 +35,24 @@ except ImportError:
                 pass
 # from gello.cameras.camera import CameraDriver
 
+def check_usb_devices():
+    """Check USB devices to help debug camera connection issues."""
+    try:
+        import subprocess
+        result = subprocess.run(['lsusb'], capture_output=True, text=True)
+        print("USB devices detected:")
+        print(result.stdout)
+        
+        # Look specifically for Intel devices
+        intel_devices = [line for line in result.stdout.split('\n') if 'Intel' in line]
+        if intel_devices:
+            print("Intel USB devices found:")
+            for device in intel_devices:
+                print(f"  - {device}")
+        else:
+            print("No Intel USB devices found - RealSense cameras may not be connected")
+    except Exception as e:
+        print(f"Error checking USB devices: {e}")
 
 def get_device_ids() -> List[str]:
     import pyrealsense2 as rs
@@ -145,6 +163,7 @@ def _debug_read(camera, save_datastream=False):
 
 
 if __name__ == "__main__":
+    # check_usb_devices()
     device_ids = get_device_ids()
     print(f"Found {len(device_ids)} devices")
     print(device_ids)

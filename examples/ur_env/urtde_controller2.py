@@ -400,9 +400,14 @@ class URTDEController:
         else:
             assert len(action) == 6, f"wrong action dim: {len(action)}"
         
-        # Check if the actions are in range
-        joints_min = [-2.355, -2.355, -2.355, -2.355, -3.14, -3.14, 0]
+        # # Check if the actions are in range
+        joints_min = [-3.14, -3.14, -3.14, -3.14, -3.14, -3.14, 0]
         joints_max = [-0.785, -0.785, -0.785, -0.785, 3.14, 3.14, 1]
+        # joints_max = [3.14, 3.14, 3.14, 3.14, 3.14, 3.14, 1]
+        
+
+        # joints_min = [0.0, -2.355, -2.355, -2.355, -3.14, -3.14, 0]
+        # joints_max = [2.04, -0.785, -0.785, -0.785, 3.14, 3.14, 1]
 
         # # Check if the action is in range and print which joint is out of range
         # for i, angle in enumerate(action):
@@ -440,7 +445,6 @@ class URTDEController:
             elif angle > 0.1:
                 print(f"Joint {i} above limit: {angle} radians -> clipped to {0.1} radians")
                 delta_angles[i] = 0.1
-
 
         if np.abs(delta_angles).max() > 0.1:
             print(f"Delta: {delta_angles}")

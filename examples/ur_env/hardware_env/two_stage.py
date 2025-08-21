@@ -8,12 +8,12 @@ class TwoStageEEConfig:
         self.init_ee_pos = [0.5, 0, 0.32]  # Initial end-effector position
         self.home = np.array(
             [
-                np.deg2rad(-58.85),
-                np.deg2rad(-96.05),
-                np.deg2rad(-42.04),
-                np.deg2rad(-131.81),
-                np.deg2rad(89.92),
-                np.deg2rad(122.09),
+                np.deg2rad(-90.0),
+                np.deg2rad(-90.0),
+                np.deg2rad(-90.0),
+                np.deg2rad(-90.0),
+                np.deg2rad(90.0),
+                np.deg2rad(90.0),
                 # -1.275836,  # press toast
                 # -1.6735962,  # 2nd joint, vertical, negative: go up, positive: go down
                 # -0.73670348,  # 3rd joint, horizontal,
