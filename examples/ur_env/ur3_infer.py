@@ -4,9 +4,11 @@ os.environ["XLA_PYTHON_CLIENT_PREALLOCATE"] = "false"
 os.environ["XLA_PYTHON_CLIENT_MEM_FRACTION"] = ".50"
 
 import sys
-sys.path.append('/home/shreya/Desktop/PI/openpi')  # Add the module path
-from ur_ikfast import ur_kinematics
+# No need for sys.path.append if the package is installed correctly
 
+# Use a try-except block for flexible importing
+from ur_ikfast.ur_ikfast import ur_kinematics 
+    
 import time
 import numpy as np
 import cv2
@@ -34,7 +36,7 @@ class UR3ControllerWithRemoteInference:
             task="two_stage",  # This task is already in the config
             controller_type="CARTESIAN_DELTA",
             max_delta=0.05,
-            mock=1,  # Set to 1 for mock mode
+            mock=0,  # Set to 1 for mock mode
             hostname="192.168.77.232",
             robot_port=50002,
             robot_ip=robot_ip,
@@ -116,7 +118,7 @@ class UR3ControllerWithRemoteInference:
         """Retrieve the current state of the robot."""
         # The get_state() method returns a tuple (state, in_good_range)
         state_tuple = self.controller.get_state()
-        print(f"Robot state tuple: {state_tuple}")
+        # print(f"Robot state tuple: {state_tuple}")
         
         # Unpack the tuple to get just the state dictionary
         state_dict, in_good_range = state_tuple
@@ -155,7 +157,7 @@ class UR3ControllerWithRemoteInference:
         cv2.imwrite("base_rgb.png", observation["base_rgb"])
         cv2.imwrite("wrist_rgb.png", observation["wrist_rgb"])
 
-        print(f"Sending observation: {observation}")
+        # print(f"Sending observation: {observation}")
         
         # Query the policy server
         result = self.policy_client.infer(observation)
@@ -164,24 +166,23 @@ class UR3ControllerWithRemoteInference:
     def execute_action(self, action):
         """Send the action to the robot."""
         
-        # Convert from [-1,1] range to the actual delta range
-        pos_scaling = np.array([0.01, 0.01, 0.01, 0.05, 0.05, 0.05, 1.0])
+        # # Convert from [-1,1] range to the actual delta range
+        # pos_scaling = np.array([0.01, 0.01, 0.01, 0.05, 0.05, 0.05, 1.0])
         
-        # Adjust the normalization if your policy outputs in a different range
-        normalized_action = np.clip(action, -1.0, 1.0)
+        # # Adjust the normalization if your policy outputs in a different range
+        # normalized_action = np.clip(action, -1.0, 1.0)
         
         # Scale to the actual control range
-        scaled_action = normalized_action * pos_scaling
+        # scaled_action = normalized_action * pos_scaling
 
-        # Handle gripper specially (it's typically [0,1] not [-1,1])
-        if len(scaled_action) == 7:
-            scaled_action[6] = (normalized_action[6] + 1) / 2.0  # Map from [-1,1] to [0,1]
+        # # Handle gripper specially (it's typically [0,1] not [-1,1])
+        # if len(scaled_action) == 7:
+        #     scaled_action[6] = (normalized_action[6] + 1) / 2.0  # Map from [-1,1] to [0,1]
 
-        gripper_position = scaled_action[6]
-        scaled_action = scaled_action[:6]  # Remove gripper position for IK calculation
+        gripper_position = action[6]
+        scaled_action = action[:6]  # Remove gripper position for IK calculation
         
-        ur5_pose_quat = ur5_arm.forward(scaled_action)
-        ur5_pose_matrix = ur5_arm.forward(scaled_action, 'matrix')
+        ur5_pose_quat = ur3_arm.forward(scaled_action)
         print("UR5 Pose:", ur5_pose_quat)
 
         # Adjust the initial guess to be closer to the expected solution
@@ -189,12 +190,19 @@ class UR3ControllerWithRemoteInference:
         print("UR3 Joint Angles (IK):", ur3_joint_angles)
 
         # Validate joint angles (example validation)
-        if any(angle < -np.pi or angle > np.pi for angle in ur3_joint_angles):
+        invalid_joint = False
+        for i, angle in enumerate(ur3_joint_angles):
+            if angle < -np.pi or angle > np.pi:
+                print(f"Joint {i} exceeds limit: {angle} radians")
+                invalid_joint = True
+
+        if invalid_joint:
             print("Invalid joint angles. Skipping execution.")
             return
+        
         # add back the gripper pos
         if len(ur3_joint_angles) == 7:
-            ur3_joint_angles[6] = scaled_action[6]  # Gripper position
+            ur3_joint_angles[6] = gripper_position  # Gripper position
         else:     
             ur3_joint_angles_with_gripper = np.append(ur3_joint_angles, gripper_position) # Add gripper position
  
@@ -202,8 +210,7 @@ class UR3ControllerWithRemoteInference:
 
         print(f"Executing action: {ur3_joint_angles_with_gripper}")
 
-
-        
+    
     def reset(self):
         """Reset the robot to the home position."""
         self.controller.reset()
@@ -219,7 +226,7 @@ class UR3ControllerWithRemoteInference:
 
 def main():
     """Main function to run the UR3 controller with remote policy server integration."""
-    prompt = "Press the red button"
+    prompt = "Push the red button thats on the table"
     robot_ip = "192.168.77.22"
     host = "localhost"  # Replace with the policy server's IP address
     port = 8000
@@ -231,26 +238,38 @@ def main():
         port=port
     )
 
+    # Open-loop horizon: how many actions to execute from a chunk before querying again
+    open_loop_horizon = 32
+    
     try:
         # Reset the robot
         controller.reset()
 
+        # Rollout parameters
+        actions_from_chunk_completed = 0
+        action_chunk = None
+
         # Run inference and execute actions
-        for step in range(5):  # Run for 10 steps
+        for step in range(1000):  # Run for 32 steps
             print(f"Step {step + 1}")
 
-            # Capture images
+            # Capture images and get robot state
             images = controller.capture_images()
-
-            # Get robot state
             state = controller.get_robot_state()
 
-            # Query the policy server
-            action_chunk = controller.query_policy_server(prompt, images, state)
-            print(f"Received action chunk: {action_chunk}")
-
-            # Execute the first action in the action chunk
-            controller.execute_action(action_chunk[0])
+            # Query the policy server only if we need a new action chunk
+            if action_chunk is None or actions_from_chunk_completed >= open_loop_horizon:
+                actions_from_chunk_completed = 0
+                # Query the policy server
+                action_chunk = controller.query_policy_server(prompt, images, state)
+                print(f"Received new action chunk with {(action_chunk)} ")
+            
+            # Select the current action to execute from the chunk
+            action = action_chunk[actions_from_chunk_completed]
+            actions_from_chunk_completed += 1
+            
+            # Execute the selected action
+            controller.execute_action(action)
 
             time.sleep(0.1)  # Control loop delay
 

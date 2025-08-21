@@ -187,7 +187,7 @@ class URTDEController:
 
 
 
-    def move_to_joint_positions(self, positions: np.ndarray, delta: bool = False):
+    def move_to_joint_positions(self, positions: np.ndarray, interpolation: bool = False, delta: bool = False):
         """Moves the robot to the specified joint positions.
 
         Args:
@@ -203,25 +203,32 @@ class URTDEController:
         # Check if current joints and positions are same
         assert len(list(positions)) == len(curr_joints), "positions and current joint angles are not same"
         
-        # print("curr_joints", curr_joints)
-        # print("len(list(positions))", len(list(positions)), "len(curr_joints)", len(curr_joints))
-        if len(list(positions)) == len(curr_joints):
-            max_delta = (np.abs(curr_joints - positions)).max()
-            # print("max_delta", max_delta)   
-            steps = min(int(max_delta / 0.01), 100)
-            print("Steps to reach home pose", steps)
+        max_difference = (np.abs(curr_joints - positions)).max()
 
-        if not delta:
-            for jnt in np.linspace(curr_joints, positions, steps):
-                # print("Commanding joint state")
-                self._robot.command_joint_state(jnt)
-                print(self._robot.get_ee_pose())
-        elif delta:
-            self._robot.command_joint_state(positions)
+        if delta:
+            delta_angles = positions
+            # Check if the delta is too large
+            if np.abs(delta_angles).max() > 0.1:
+                print(f"Delta: {delta}")
+                print(f"Joint angles: {positions}")
+                raise ValueError("Joint angles difference is too large")
+            new_goal = curr_joints + delta_angles
+            print("My new goal: ", new_goal)
+            self._robot.command_joint_state(new_goal)
+
+        else:
+            if interpolation:
+                steps = min(int(max_difference / 0.01), 100)
+                for jnt in np.linspace(curr_joints, positions, steps):
+                    # print("Commanding joint state")
+                    self._robot.command_joint_state(jnt)
+                    print(self._robot.get_ee_pose())
+            else:
+                self._robot.command_joint_state(positions)
 
         return True
 
-    def move_to_eef_positions(self, positions: np.ndarray, delta: bool = False):
+    def move_to_eef_positions(self, positions: np.ndarray, interpolation: bool = False):
         """Moves the robot to the specified joint positions.
 
         Args:
@@ -271,7 +278,7 @@ class URTDEController:
 
 
 
-            if not delta:
+            if not interpolation:
                 for pose in np.linspace(curr_pose, positions, steps):
                     print("pose", pose)
                     self._robot.command_eef_pose(pose)
@@ -390,31 +397,62 @@ class URTDEController:
         """
         if self.use_gripper:
             assert len(action) == 7, f"wrong action dim: {len(action)}"
-            robot_action = action[:-1] 
-            gripper_action = action[-1] 
         else:
             assert len(action) == 6, f"wrong action dim: {len(action)}"
-            robot_action = action
+        
+        # Check if the actions are in range
+        joints_min = [-2.355, -2.355, -2.355, -2.355, -3.14, -3.14, 0]
+        joints_max = [-0.785, -0.785, -0.785, -0.785, 3.14, 3.14, 1]
 
-        joints_min = [-2.355, -2.355, -2.355, -2.355, -3.14, -3.14]
-        joints_max = [-0.785, -0.785, -0.785, -0.785, 3.14, 3.14]
+        # # Check if the action is in range and print which joint is out of range
+        # for i, angle in enumerate(action):
+        #     if (angle < joints_min[i]) or (angle > joints_max[i]):
+        #         print(f"Joint {i} exceeds limit: {angle} radians")
+        #         raise ValueError("Joint angles out of range")  
+        # assert(len(curr_joints) == len(action)), "Action and current joint angles are not same"
 
-        if np.any(robot_action < joints_min) or np.any(robot_action > joints_max):
-            print(f"Joint angles: {action}")
-            raise ValueError("Joint angles out of range")
+    
+        # Clip joint angles that exceed limits and log which ones were changed
+        clipped_action = action.copy()  # Create a copy to modify
+        for i, angle in enumerate(action):
+            if angle < joints_min[i]:
+                print(f"Joint {i} below limit: {angle} radians -> clipped to {joints_min[i]} radians")
+                clipped_action[i] = joints_min[i]
+            elif angle > joints_max[i]:
+                print(f"Joint {i} above limit: {angle} radians -> clipped to {joints_max[i]} radians")
+                clipped_action[i] = joints_max[i]
+        
+        # If any joints were clipped, log the before and after values
+        if not np.array_equal(action, clipped_action):
+            print(f"Original joint angles: {action}")
+            print(f"Clipped joint angles: {clipped_action}")
         
         curr_joints = self._robot.get_joint_state()
-        assert(len(curr_joints) == len(action)), "Action and current joint angles are not same"
+        assert(len(curr_joints) == len(clipped_action)), "Action and current joint angles are not same"
+        
+        delta_angles = clipped_action - curr_joints
+        print("delta", delta_angles)   
 
-        delta = curr_joints - action
-        if np.abs(delta).max() > 0.5:
-            print(f"Delta: {delta}")
-            print(f"Joint angles: {action}")
+        for i, angle in enumerate(delta_angles):
+            if angle < -0.1:
+                print(f"Joint {i} below limit: {angle} radians -> clipped to {-0.1} radians")
+                delta_angles[i] = -0.1
+            elif angle > 0.1:
+                print(f"Joint {i} above limit: {angle} radians -> clipped to {0.1} radians")
+                delta_angles[i] = 0.1
+
+
+        if np.abs(delta_angles).max() > 0.1:
+            print(f"Delta: {delta_angles}")
+            print(f"Joint angles: {clipped_action}")
             raise ValueError("Joint angles difference is too large")
         
-        self.move_to_joint_positions(action, delta=True)
+        self.move_to_joint_positions(delta_angles, delta=True)
         print("Joint angles updated . . . ")
-        if self.use_gripper:
+        
+        # Handle gripper if present
+        if self.use_gripper and len(clipped_action) == 7:
+            gripper_action = clipped_action[6]
             self.update_gripper(gripper_action, blocking=False)
             print("Gripper updated . . .")
 
@@ -475,9 +513,6 @@ class URTDEController:
 
 import datetime
 import glob
-
-
-
 
 @dataclass
 class Args:

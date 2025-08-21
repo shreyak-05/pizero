@@ -50,7 +50,7 @@ class URKinematics():
         elif robot_name == 'ur5':
             import ur5_ikfast as ur_ikfast
         elif robot_name == 'ur5e':
-            import ur5e_ikfast as ur_ikfast
+            import ur5e_ikfast as ur_ikfast 
         elif robot_name == 'ur10':
             import ur10_ikfast as ur_ikfast
         elif robot_name == 'ur10e':
