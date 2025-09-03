@@ -250,33 +250,77 @@ class LeRobotAlohaDataConfig(DataConfigFactory):
         )
 
 
-# not needed when performing just inference. 
+# # not needed when performing just inference. 
+# @dataclasses.dataclass(frozen=True)
+# class LeRobotUR5DataConfig(DataConfigFactory):
+
+#     @override
+#     def create(self, assets_dirs: pathlib.Path, model_config: _model.BaseModelConfig) -> DataConfig:
+#         # Boilerplate for remapping keys from the LeRobot dataset. We assume no renaming needed here.
+#         repack_transform = _transforms.Group(
+#             inputs=[
+#                 _transforms.RepackTransform(
+#                     {
+#                         "base_rgb": "image",
+#                         "wrist_rgb": "wrist_image",
+#                         "joints": "joints",
+#                         "gripper": "gripper",
+#                         "prompt": "prompt",
+#                     }
+#                 )
+#             ]
+#         )
+
+#         # These transforms are the ones we wrote earlier.
+#         data_transforms = _transforms.Group(
+#             inputs=[ur5_policy.UR5Inputs(action_dim=model_config.action_dim, model_type=model_config.model_type)],
+#             outputs=[ur5_policy.UR5Outputs()],
+#         )
+
+#         # Convert absolute actions to delta actions.
+#         # By convention, we do not convert the gripper action (7th dimension).
+#         delta_action_mask = _transforms.make_bool_mask(6, -1)
+#         data_transforms = data_transforms.push(
+#             inputs=[_transforms.DeltaActions(delta_action_mask)],
+#             outputs=[_transforms.AbsoluteActions(delta_action_mask)],
+#         )
+
+#         # Model transforms include things like tokenizing the prompt and action targets
+#         # You do not need to change anything here for your own dataset.
+#         model_transforms = ModelTransformFactory()(model_config)
+
+#         # We return all data transforms for training and inference. No need to change anything here.
+#         return dataclasses.replace(
+#             self.create_base_config(assets_dirs),
+#             repack_transforms=repack_transform,
+#             data_transforms=data_transforms,
+#             model_transforms=model_transforms,
+#         )
+
 @dataclasses.dataclass(frozen=True)
 class LeRobotUR5DataConfig(DataConfigFactory):
-
     @override
     def create(self, assets_dirs: pathlib.Path, model_config: _model.BaseModelConfig) -> DataConfig:
-        # Boilerplate for remapping keys from the LeRobot dataset. We assume no renaming needed here.
+        # Modified repack transform to match your dataset keys
         repack_transform = _transforms.Group(
             inputs=[
                 _transforms.RepackTransform(
                     {
-                        "base_rgb": "image",
-                        "wrist_rgb": "wrist_image",
-                        "joints": "joints",
-                        "gripper": "gripper",
+                        "observation/image": "image",
+                        "observation/state": "state",
+                        "actions": "actions",
                         "prompt": "prompt",
                     }
                 )
             ]
         )
-
-        # These transforms are the ones we wrote earlier.
+        
+        # These transforms are the same as the original UR5 config
         data_transforms = _transforms.Group(
             inputs=[ur5_policy.UR5Inputs(action_dim=model_config.action_dim, model_type=model_config.model_type)],
             outputs=[ur5_policy.UR5Outputs()],
         )
-
+        
         # Convert absolute actions to delta actions.
         # By convention, we do not convert the gripper action (7th dimension).
         delta_action_mask = _transforms.make_bool_mask(6, -1)
@@ -284,20 +328,17 @@ class LeRobotUR5DataConfig(DataConfigFactory):
             inputs=[_transforms.DeltaActions(delta_action_mask)],
             outputs=[_transforms.AbsoluteActions(delta_action_mask)],
         )
-
+        
         # Model transforms include things like tokenizing the prompt and action targets
-        # You do not need to change anything here for your own dataset.
         model_transforms = ModelTransformFactory()(model_config)
-
-        # We return all data transforms for training and inference. No need to change anything here.
+        
+        # Return all data transforms for training and inference
         return dataclasses.replace(
             self.create_base_config(assets_dirs),
             repack_transforms=repack_transform,
             data_transforms=data_transforms,
             model_transforms=model_transforms,
         )
-
-
 
 @dataclasses.dataclass(frozen=True)
 class LeRobotLiberoDataConfig(DataConfigFactory):
@@ -575,6 +616,94 @@ _CONFIGS = [
         # you chose above.
         freeze_filter=pi0.Pi0Config(
             paligemma_variant="gemma_2b_lora", action_expert_variant="gemma_300m_lora"
+        ).get_freeze_filter(),
+        # Turn off EMA for LoRA finetuning.
+        ema_decay=None,
+    ),
+    # TrainConfig(
+    #     name="pi0_fast_my_dataset",
+    #     # Modified for your custom dataset
+    #     # action_dim=7 matches your dataset (7-DOF robot state and actions)
+    #     # action_horizon=10 (you can adjust this based on your needs)
+    #     # max_token_len=180 is good for single-arm robots like yours
+    #     model=pi0_fast.Pi0FASTConfig(action_dim=7, action_horizon=10, max_token_len=180),
+    #     data=LeRobotLiberoDataConfig(
+    #         repo_id="your_hf_username/libero",  # This should match REPO_NAME in your conversion script
+    #         base_config=DataConfig(
+    #             local_files_only=True,  # Set to True since you're using a local dataset
+    #             prompt_from_task=True,  # This will use your episode directory names as task prompts
+    #         ),
+    #     ),
+    #     # Load the pi0-FAST base model checkpoint
+    #     weight_loader=weight_loaders.CheckpointWeightLoader("s3://openpi-assets/checkpoints/pi0_fast_base/params"),
+    #     num_train_steps=30_000,
+    # ),
+    # TrainConfig(
+    #     name="pi0_fast_my_dataset_low_mem_finetune",
+    #     # LoRA finetuning version for your dataset
+    #     model=pi0_fast.Pi0FASTConfig(
+    #         action_dim=7, action_horizon=10, max_token_len=180, paligemma_variant="gemma_2b_lora"
+    #     ),
+    #     data=LeRobotLiberoDataConfig(
+    #         repo_id="your_hf_username/libero",  # This should match REPO_NAME in your conversion script
+    #         base_config=DataConfig(
+    #             local_files_only=True,  # Set to True since you're using a local dataset
+    #             prompt_from_task=True,  # This will use your episode directory names as task prompts
+    #         ),
+    #     ),
+    #     weight_loader=weight_loaders.CheckpointWeightLoader("s3://openpi-assets/checkpoints/pi0_fast_base/params"),
+    #     num_train_steps=30_000,
+    #     # Freeze filter for LoRA finetuning
+    #     freeze_filter=pi0_fast.Pi0FASTConfig(
+    #         action_dim=7, action_horizon=10, max_token_len=180, paligemma_variant="gemma_2b_lora"
+    #     ).get_freeze_filter(),
+    #     # Turn off EMA for LoRA finetuning
+    #     ema_decay=None,
+    # ),
+      TrainConfig(
+        name="pi0_fast_my_dataset",
+        # Here is an example of loading a pi0-FAST model for full finetuning.
+        # Modify action_dim and action_horizon to match your dataset (action horizon is equal to
+        # the desired action chunk length).
+        # The max_token_len is the maximum number of (non-image) tokens the model can handle.
+        # This includes the tokenized prompt, proprioceptive state, and (FAST-tokenized) action tokens.
+        # Choosing this value too small may chop off tokens at the end of your sequence (the code will throw
+        # a warning), while choosing it too large will waste memory (since we pad each batch element to the
+        # max_token_len). A good rule of thumb is to use approx 180 for single-arm robots, and approx 250 for
+        # two-arm robots. Generally, err on the lower side here first, and potentially increase the value if
+        # you see many warnings being thrown during training.
+        model=pi0_fast.Pi0FASTConfig(action_dim=7, action_horizon=10, max_token_len=180),
+        data=LeRobotLiberoDataConfig(
+            repo_id="pi0_finetune/libero",
+            base_config=DataConfig(
+                local_files_only=True,  # Set to True for local-only datasets.
+                prompt_from_task=True,
+            ),
+        ),
+        # Note that we load the pi0-FAST base model checkpoint here.
+        weight_loader=weight_loaders.CheckpointWeightLoader("s3://openpi-assets/checkpoints/pi0_fast_base/params"),
+        num_train_steps=30_000,
+    ),
+    TrainConfig(
+        name="pi0_fast_my_dataset_low_mem_finetune",
+        # Here is an example of loading a pi0-FAST model for LoRA finetuning.
+        # For setting action_dim, action_horizon, and max_token_len, see the comments above.
+        model=pi0_fast.Pi0FASTConfig(
+            action_dim=7, action_horizon=10, max_token_len=180, paligemma_variant="gemma_2b_lora"
+        ),
+        data=LeRobotLiberoDataConfig(
+            repo_id="pi0_finetune/libero",
+            base_config=DataConfig(
+                local_files_only=True,  # Set to True for local-only datasets.
+                prompt_from_task=True,
+            ),
+        ),
+        weight_loader=weight_loaders.CheckpointWeightLoader("s3://openpi-assets/checkpoints/pi0_fast_base/params"),
+        num_train_steps=30_000,
+        # Again, make sure to match the model config above when extracting the freeze filter
+        # that specifies which parameters should be frozen during LoRA finetuning.
+        freeze_filter=pi0_fast.Pi0FASTConfig(
+            action_dim=7, action_horizon=10, max_token_len=180, paligemma_variant="gemma_2b_lora"
         ).get_freeze_filter(),
         # Turn off EMA for LoRA finetuning.
         ema_decay=None,
