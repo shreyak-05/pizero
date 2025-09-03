@@ -22,8 +22,13 @@ import shutil
 
 from lerobot.common.datasets.lerobot_dataset import LEROBOT_HOME
 from lerobot.common.datasets.lerobot_dataset import LeRobotDataset
-import tensorflow_datasets as tfds
+# import tensorflow_datasets as tfds
 import tyro
+import os
+import json
+import numpy as np
+from pathlib import Path
+from PIL import Image
 
 REPO_NAME = "your_hf_username/libero"  # Name of the output dataset, also used for the Hugging Face Hub
 RAW_DATASET_NAMES = [
@@ -45,7 +50,7 @@ def main(data_dir: str, *, push_to_hub: bool = False):
     # LeRobot assumes that dtype of image data is `image`
     dataset = LeRobotDataset.create(
         repo_id=REPO_NAME,
-        robot_type="panda",
+        robot_type="ur5e",
         fps=10,
         features={
             "image": {
@@ -60,7 +65,7 @@ def main(data_dir: str, *, push_to_hub: bool = False):
             },
             "state": {
                 "dtype": "float32",
-                "shape": (8,),
+                "shape": (7,),
                 "names": ["state"],
             },
             "actions": {
@@ -75,19 +80,117 @@ def main(data_dir: str, *, push_to_hub: bool = False):
 
     # Loop over raw Libero datasets and write episodes to the LeRobot dataset
     # You can modify this for your own data format
-    for raw_dataset_name in RAW_DATASET_NAMES:
-        raw_dataset = tfds.load(raw_dataset_name, data_dir=data_dir, split="train")
-        for episode in raw_dataset:
-            for step in episode["steps"].as_numpy_iterator():
+    #modify for my own data format
+    
+    # Path to your dataset
+    dataset_root = Path(data_dir)
+    meta_path = dataset_root / "meta.json"
+    episodes_dir = dataset_root / "episodes"
+
+    # Optionally, load meta.json if you need any info from it
+    if meta_path.exists():
+        with open(meta_path, "r") as f:
+            meta = json.load(f)
+    else:
+        meta = {}
+
+    # Track statistics
+    total_episodes = 0
+    skipped_episodes = 0
+    corrupted_images = 0
+
+    # Iterate through each episode directory
+    for episode_dir in sorted(episodes_dir.iterdir()):
+        if not episode_dir.is_dir():
+            continue
+
+        total_episodes += 1
+        obs_dir = episode_dir / "observation" / "image"
+        robot_state_path = episode_dir / "observation" / "state.npy"
+        action_path = episode_dir / "action.npy"
+        timestamps_path = episode_dir / "timestamps.npy"
+
+        # Load robot state, actions, and timestamps
+        robot_states = np.load(robot_state_path)  # shape: (T, 7)
+        actions = np.load(action_path)            # shape: (T, 7)
+        timestamps = np.load(timestamps_path)     # shape: (T,)
+
+        # Get sorted list of image files
+        image_files = sorted(obs_dir.glob("*.png"))
+
+        # Check all lengths match
+        T = len(image_files)
+        if not (len(robot_states) == len(actions) == len(timestamps) == T):
+            #print lengths
+            print(f"Length mismatch in {episode_dir.name}:")
+            print(f"  robot_states: {len(robot_states)}")
+            print(f"  actions: {len(actions)}")
+            print(f"  timestamps: {len(timestamps)}")
+            print(f"  images: {T}")
+            print(f"Length mismatch in {episode_dir.name}, skipping.")
+            skipped_episodes += 1
+            continue
+
+        # Add frames to dataset
+        episode_valid = True
+        valid_frames = []
+        
+        for t in range(T):
+            try:
+                # Try to open and validate the image
+                with Image.open(image_files[t]) as img:
+                    # Verify the image can be loaded completely
+                    img.verify()
+                
+                # Reopen for actual use (verify() closes the file)
+                image = np.array(Image.open(image_files[t]))
+                
+                # Check if image has expected dimensions
+                if image.shape != (256, 256, 3):
+                    print(f"Warning: Image {image_files[t]} has unexpected shape {image.shape}, reshaping...")
+                    # Resize if needed
+                    img_pil = Image.fromarray(image) if len(image.shape) == 3 else Image.open(image_files[t])
+                    img_pil = img_pil.resize((256, 256))
+                    image = np.array(img_pil)
+                    
+                    # Ensure 3 channels
+                    if len(image.shape) == 2:  # Grayscale
+                        image = np.stack([image] * 3, axis=-1)
+                    elif image.shape[-1] == 4:  # RGBA
+                        image = image[..., :3]  # Remove alpha channel
+                
+                valid_frames.append((t, image))
+                
+            except (OSError, IOError, Exception) as e:
+                print(f"Corrupted/invalid image {image_files[t]}: {e}")
+                corrupted_images += 1
+                # Skip this frame but continue with the episode
+                continue
+        
+        # Only save episode if we have valid frames
+        if valid_frames:
+            for t, image in valid_frames:
                 dataset.add_frame(
                     {
-                        "image": step["observation"]["image"],
-                        "wrist_image": step["observation"]["wrist_image"],
-                        "state": step["observation"]["state"],
-                        "actions": step["action"],
+                        "image": image,
+                        "wrist_image": np.zeros_like(image),  # If you don't have wrist images, duplicate or set to zeros
+                        "state": robot_states[t],
+                        "actions": actions[t],
                     }
                 )
-            dataset.save_episode(task=step["language_instruction"].decode())
+            # Save episode, use episode_dir name as task
+            dataset.save_episode(task=episode_dir.name)
+            print(f"Processed episode {episode_dir.name}: {len(valid_frames)}/{T} valid frames")
+        else:
+            print(f"Skipping episode {episode_dir.name}: no valid images")
+            skipped_episodes += 1
+
+    # Print summary
+    print(f"\nConversion Summary:")
+    print(f"  Total episodes: {total_episodes}")
+    print(f"  Successfully processed: {total_episodes - skipped_episodes}")
+    print(f"  Skipped episodes: {skipped_episodes}")
+    print(f"  Corrupted images: {corrupted_images}")
 
     # Consolidate the dataset, skip computing stats since we will do that later
     dataset.consolidate(run_compute_stats=False)
