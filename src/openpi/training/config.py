@@ -620,68 +620,19 @@ _CONFIGS = [
         # Turn off EMA for LoRA finetuning.
         ema_decay=None,
     ),
-    # TrainConfig(
-    #     name="pi0_fast_my_dataset",
-    #     # Modified for your custom dataset
-    #     # action_dim=7 matches your dataset (7-DOF robot state and actions)
-    #     # action_horizon=10 (you can adjust this based on your needs)
-    #     # max_token_len=180 is good for single-arm robots like yours
-    #     model=pi0_fast.Pi0FASTConfig(action_dim=7, action_horizon=10, max_token_len=180),
-    #     data=LeRobotLiberoDataConfig(
-    #         repo_id="your_hf_username/libero",  # This should match REPO_NAME in your conversion script
-    #         base_config=DataConfig(
-    #             local_files_only=True,  # Set to True since you're using a local dataset
-    #             prompt_from_task=True,  # This will use your episode directory names as task prompts
-    #         ),
-    #     ),
-    #     # Load the pi0-FAST base model checkpoint
-    #     weight_loader=weight_loaders.CheckpointWeightLoader("s3://openpi-assets/checkpoints/pi0_fast_base/params"),
-    #     num_train_steps=30_000,
-    # ),
-    # TrainConfig(
-    #     name="pi0_fast_my_dataset_low_mem_finetune",
-    #     # LoRA finetuning version for your dataset
-    #     model=pi0_fast.Pi0FASTConfig(
-    #         action_dim=7, action_horizon=10, max_token_len=180, paligemma_variant="gemma_2b_lora"
-    #     ),
-    #     data=LeRobotLiberoDataConfig(
-    #         repo_id="your_hf_username/libero",  # This should match REPO_NAME in your conversion script
-    #         base_config=DataConfig(
-    #             local_files_only=True,  # Set to True since you're using a local dataset
-    #             prompt_from_task=True,  # This will use your episode directory names as task prompts
-    #         ),
-    #     ),
-    #     weight_loader=weight_loaders.CheckpointWeightLoader("s3://openpi-assets/checkpoints/pi0_fast_base/params"),
-    #     num_train_steps=30_000,
-    #     # Freeze filter for LoRA finetuning
-    #     freeze_filter=pi0_fast.Pi0FASTConfig(
-    #         action_dim=7, action_horizon=10, max_token_len=180, paligemma_variant="gemma_2b_lora"
-    #     ).get_freeze_filter(),
-    #     # Turn off EMA for LoRA finetuning
-    #     ema_decay=None,
-    # ),
-      TrainConfig(
+    TrainConfig(
         name="pi0_fast_my_dataset",
-        # Here is an example of loading a pi0-FAST model for full finetuning.
-        # Modify action_dim and action_horizon to match your dataset (action horizon is equal to
-        # the desired action chunk length).
-        # The max_token_len is the maximum number of (non-image) tokens the model can handle.
-        # This includes the tokenized prompt, proprioceptive state, and (FAST-tokenized) action tokens.
-        # Choosing this value too small may chop off tokens at the end of your sequence (the code will throw
-        # a warning), while choosing it too large will waste memory (since we pad each batch element to the
-        # max_token_len). A good rule of thumb is to use approx 180 for single-arm robots, and approx 250 for
-        # two-arm robots. Generally, err on the lower side here first, and potentially increase the value if
-        # you see many warnings being thrown during training.
         model=pi0_fast.Pi0FASTConfig(action_dim=7, action_horizon=10, max_token_len=180),
         data=LeRobotLiberoDataConfig(
-            repo_id="pi0_finetune/libero",
+            repo_id="ShreyaKalyan/libero",  # <--- point here
             base_config=DataConfig(
-                local_files_only=True,  # Set to True for local-only datasets.
+                local_files_only=True,   # important: avoids trying Hugging Face again
                 prompt_from_task=True,
             ),
         ),
-        # Note that we load the pi0-FAST base model checkpoint here.
-        weight_loader=weight_loaders.CheckpointWeightLoader("s3://openpi-assets/checkpoints/pi0_fast_base/params"),
+        weight_loader=weight_loaders.CheckpointWeightLoader(
+            "s3://openpi-assets/checkpoints/pi0_fast_base/params"
+        ),
         num_train_steps=30_000,
     ),
     TrainConfig(
