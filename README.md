@@ -12,6 +12,7 @@ uv run scripts/serve_policy.py --env UR3 --default_prompt='press the red button'
 #In another terminal activate the conda env : 
 ```bash
 conda env create -f environment.yml
+conda env create -f openpi_env.yml (recently used env)
 conda activate openpi_env
 ```
 ```bash
