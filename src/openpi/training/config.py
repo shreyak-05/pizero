@@ -637,27 +637,24 @@ _CONFIGS = [
     ),
     TrainConfig(
         name="pi0_fast_my_dataset_low_mem_finetune",
-        # Here is an example of loading a pi0-FAST model for LoRA finetuning.
-        # For setting action_dim, action_horizon, and max_token_len, see the comments above.
+        batch_size=1,
+        ema_decay=None,  # disable EMA
         model=pi0_fast.Pi0FASTConfig(
-            action_dim=7, action_horizon=10, max_token_len=180, paligemma_variant="gemma_2b_lora"
+            action_dim=7, action_horizon=10, max_token_len=96,  # 96 gives extra headroom
+            paligemma_variant="gemma_2b_lora",
         ),
         data=LeRobotLiberoDataConfig(
-            repo_id="pi0_finetune/libero",
-            base_config=DataConfig(
-                local_files_only=True,  # Set to True for local-only datasets.
-                prompt_from_task=True,
-            ),
+            repo_id="ShreyaKalyan/libero",
+            base_config=DataConfig(local_files_only=True, prompt_from_task=True),
         ),
-        weight_loader=weight_loaders.CheckpointWeightLoader("s3://openpi-assets/checkpoints/pi0_fast_base/params"),
+        weight_loader=weight_loaders.CheckpointWeightLoader(
+            "s3://openpi-assets/checkpoints/pi0_fast_base/params"
+        ),
         num_train_steps=30_000,
-        # Again, make sure to match the model config above when extracting the freeze filter
-        # that specifies which parameters should be frozen during LoRA finetuning.
         freeze_filter=pi0_fast.Pi0FASTConfig(
-            action_dim=7, action_horizon=10, max_token_len=180, paligemma_variant="gemma_2b_lora"
-        ).get_freeze_filter(),
-        # Turn off EMA for LoRA finetuning.
-        ema_decay=None,
+            action_dim=7, action_horizon=10, max_token_len=96,
+            paligemma_variant="gemma_2b_lora",
+        ).get_freeze_filter(),  # CRITICAL: prevents Adam states for frozen 2B params
     ),
     TrainConfig(
         name="pi0_fast_libero",
