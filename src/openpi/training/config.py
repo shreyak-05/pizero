@@ -621,7 +621,7 @@ _CONFIGS = [
         ema_decay=None,
     ),
     TrainConfig(
-        name="pi0_fast_my_dataset",
+        name="pi0_fast_my_dataset_old",
         model=pi0_fast.Pi0FASTConfig(action_dim=7, action_horizon=10, max_token_len=180),
         data=LeRobotLiberoDataConfig(
             repo_id="ShreyaKalyan/libero",  # <--- point here
@@ -636,7 +636,7 @@ _CONFIGS = [
         num_train_steps=30_000,
     ),
     TrainConfig(
-        name="pi0_fast_my_dataset_low_mem_finetune",
+        name="pi0_fast_my_dataset",
         batch_size=1,
         ema_decay=None,  # disable EMA
         model=pi0_fast.Pi0FASTConfig(
